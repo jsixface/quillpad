@@ -7,13 +7,9 @@ import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.StrictMode
 import androidx.core.content.ContextCompat
+import androidx.databinding.ktx.BuildConfig
 import androidx.hilt.work.HiltWorkerFactory
-import androidx.work.Configuration
-import androidx.work.Constraints
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.NetworkType
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
+import androidx.work.*
 import coil.ImageLoader
 import coil.ImageLoaderFactory
 import coil.decode.GifDecoder
@@ -21,16 +17,18 @@ import coil.decode.ImageDecoderDecoder
 import coil.decode.VideoFrameDecoder
 import coil.disk.DiskCache
 import coil.memory.MemoryCache
-import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
+import org.koin.core.context.GlobalContext.startKoin
 import org.qosp.notes.components.workers.BinCleaningWorker
 import org.qosp.notes.components.workers.SyncWorker
+import org.qosp.notes.di.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-@HiltAndroidApp
 class App : Application(), ImageLoaderFactory, Configuration.Provider {
     val syncingScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
@@ -64,6 +62,19 @@ class App : Application(), ImageLoaderFactory, Configuration.Provider {
             enableStrictMode()
         }
         super.onCreate()
+        startKoin {
+            // Log Koin into Android logger
+            androidLogger()
+            // Reference Android context
+            androidContext(this@App)
+            // Load modules
+            modules(
+                DatabaseModule.dbModule,
+                RepositoryModule.module,
+                PreferencesModule.module,
+                BackendModule.module, MarkwonModule.module, UtilModule.module
+            )
+        }
         createNotificationChannels()
         enqueueWorkers()
     }

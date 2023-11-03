@@ -9,7 +9,7 @@ import org.qosp.notes.preferences.SyncMode
 
 class ConnectionManager(private val context: Context) {
 
-    fun isConnectionAvailable(syncMode: SyncMode): Boolean {
+    fun isConnectionAvailable(syncMode: SyncMode?): Boolean {
         val connectivityManager = context.getSystemService<ConnectivityManager>() ?: return false
 
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -19,7 +19,7 @@ class ConnectionManager(private val context: Context) {
                 capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
                 capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
                 capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> syncMode == SyncMode.ALWAYS
-                else -> false
+                else -> true
             }
         } else {
             val type = connectivityManager.activeNetworkInfo?.type ?: return false
@@ -27,7 +27,7 @@ class ConnectionManager(private val context: Context) {
                 ConnectivityManager.TYPE_WIFI -> true
                 ConnectivityManager.TYPE_ETHERNET -> true
                 ConnectivityManager.TYPE_MOBILE -> syncMode == SyncMode.ALWAYS
-                else -> false
+                else -> true
             }
         }
     }

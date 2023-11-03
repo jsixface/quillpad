@@ -10,13 +10,10 @@ import kotlinx.coroutines.GlobalScope
 import org.qosp.notes.BuildConfig
 import org.qosp.notes.components.MediaStorageManager
 import org.qosp.notes.components.backup.BackupManager
-import org.qosp.notes.data.repo.IdMappingRepository
-import org.qosp.notes.data.repo.NoteRepository
-import org.qosp.notes.data.repo.NotebookRepository
-import org.qosp.notes.data.repo.ReminderRepository
-import org.qosp.notes.data.repo.TagRepository
+import org.qosp.notes.data.repo.*
 import org.qosp.notes.data.sync.core.SyncManager
-import org.qosp.notes.data.sync.nextcloud.NextcloudManager
+import org.qosp.notes.data.sync.fs.StorageBackend
+import org.qosp.notes.data.sync.nextcloud.NextcloudBackend
 import org.qosp.notes.preferences.PreferenceRepository
 import org.qosp.notes.ui.reminders.ReminderManager
 import org.qosp.notes.ui.utils.ConnectionManager
@@ -51,12 +48,15 @@ object TestUtilModule {
         @ApplicationContext context: Context,
         preferenceRepository: PreferenceRepository,
         idMappingRepository: IdMappingRepository,
-        nextcloudManager: NextcloudManager,
-    ) = SyncManager(
+        nextcloudBackend: NextcloudBackend,
+        storageBackend: StorageBackend,
+    ): SyncManager = SyncManager(
         preferenceRepository,
         idMappingRepository,
         ConnectionManager(context),
-        nextcloudManager,
+        context,
+        nextcloudBackend,
+        storageBackend,
         GlobalScope,
     )
 

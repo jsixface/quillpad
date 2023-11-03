@@ -12,11 +12,7 @@ import coil.target.Target
 import io.noties.markwon.AbstractMarkwonPlugin
 import io.noties.markwon.MarkwonConfiguration
 import io.noties.markwon.MarkwonSpansFactory
-import io.noties.markwon.image.AsyncDrawable
-import io.noties.markwon.image.AsyncDrawableLoader
-import io.noties.markwon.image.AsyncDrawableScheduler
-import io.noties.markwon.image.DrawableUtils
-import io.noties.markwon.image.ImageSpanFactory
+import io.noties.markwon.image.*
 import org.commonmark.node.Image
 import org.qosp.notes.data.sync.core.SyncManager
 import org.qosp.notes.data.sync.nextcloud.NextcloudConfig
@@ -133,7 +129,7 @@ class CoilImagesPlugin internal constructor(coilStore: CoilStore, imageLoader: I
                         return ImageRequest.Builder(context)
                             .data(drawable.destination)
                             .apply {
-                                (syncManager.config.value as? NextcloudConfig)
+                                (syncManager.syncProvider.value?.getConfig() as? NextcloudConfig)
                                     ?.authenticationHeaders
                                     ?.forEach { (key, value) -> addHeader(key, value) }
                             }

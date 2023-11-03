@@ -3,46 +3,29 @@ package org.qosp.notes.di
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import com.tfcporciuncula.flow.FlowSharedPreferences
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import org.koin.android.ext.koin.androidContext
+import org.koin.dsl.module
 import org.qosp.notes.preferences.PreferenceRepository
 import java.io.File
 import java.security.KeyStore
-import javax.inject.Singleton
 
-val Context.dataStore by preferencesDataStore("preferences")
-
-@Module
-@InstallIn(SingletonComponent::class)
 @OptIn(ExperimentalCoroutinesApi::class)
 object PreferencesModule {
 
-    @Provides
-    @Singleton
-    fun providePreferenceRepository(
-        dataStore: DataStore<Preferences>,
-        sharedPreferences: FlowSharedPreferences,
-    ): PreferenceRepository {
-        return PreferenceRepository(dataStore, sharedPreferences)
+    private val Context.dataStore by preferencesDataStore("preferences")
+
+    val module = module {
+        single { androidContext().dataStore }
+        single { provideEncryptedSharedPreferences(androidContext()) }
+        single { PreferenceRepository(dataStore = get(), sharedPreferences = get()) }
     }
 
-    @Provides
-    @Singleton
-    fun provideDataStore(@ApplicationContext context: Context) = context.dataStore
-
-    @Provides
-    @Singleton
-    fun provideEncryptedSharedPreferences(@ApplicationContext context: Context): FlowSharedPreferences {
+    private fun provideEncryptedSharedPreferences(context: Context): FlowSharedPreferences {
         val filename = "encrypted_prefs"
 
         fun createEncryptedSharedPreferences(context: Context): SharedPreferences {
@@ -69,12 +52,13 @@ object PreferencesModule {
                 context.getSharedPreferences(filename, Context.MODE_PRIVATE)
                     .edit()
                     .clear()
-                    .commit()
+                    .apply()
 
                 keyStore.load(null)
                 keyStore.deleteEntry(MasterKey.DEFAULT_MASTER_KEY_ALIAS)
                 prefsFile.delete()
-            } catch (e: Throwable) {}
+            } catch (_: Throwable) {
+            }
         }
 
         return FlowSharedPreferences(

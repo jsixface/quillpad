@@ -1,66 +1,40 @@
 package org.qosp.notes.di
 
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
+import org.koin.dsl.module
 import org.qosp.notes.data.AppDatabase
-import org.qosp.notes.data.repo.IdMappingRepository
-import org.qosp.notes.data.repo.NoteRepository
-import org.qosp.notes.data.repo.NotebookRepository
-import org.qosp.notes.data.repo.ReminderRepository
-import org.qosp.notes.data.repo.TagRepository
-import org.qosp.notes.data.sync.core.SyncManager
-import javax.inject.Named
-import javax.inject.Singleton
+import org.qosp.notes.data.repo.*
 
 const val NO_SYNC = "NO_SYNC"
-@Module
-@InstallIn(SingletonComponent::class)
+
 object RepositoryModule {
-    @Provides
-    @Singleton
-    fun provideNotebookRepository(
-        appDatabase: AppDatabase,
-        noteRepository: NoteRepository,
-        syncManager: SyncManager,
-    ) = NotebookRepository(appDatabase.notebookDao, noteRepository, syncManager)
 
-    @Provides
-    @Named(NO_SYNC)
-    @Singleton
-    fun provideNotebookRepositoryWithNullSyncManager(
-        appDatabase: AppDatabase,
-        @Named(NO_SYNC) noteRepository: NoteRepository,
-    ) = NotebookRepository(appDatabase.notebookDao, noteRepository, null)
+    val module = module {
+        single { IdMappingRepository(get<AppDatabase>().idMappingDao) }
 
-    @Provides
-    @Singleton
-    fun provideNoteRepository(
-        appDatabase: AppDatabase,
-        syncManager: SyncManager,
-    ) = NoteRepository(appDatabase.noteDao, appDatabase.idMappingDao, appDatabase.reminderDao, syncManager)
+        single {
+            TagRepository(
+                get<AppDatabase>().tagDao,
+                get<AppDatabase>().noteTagDao,
+                noteRepository = get(),
+                syncManager = get()
+            )
+        }
 
-    @Provides
-    @Named(NO_SYNC)
-    @Singleton
-    fun provideNoteRepositoryWithNullSyncManager(
-        appDatabase: AppDatabase,
-    ) = NoteRepository(appDatabase.noteDao, appDatabase.idMappingDao, appDatabase.reminderDao, null)
+        single {
+            NotebookRepository(get<AppDatabase>().notebookDao, noteRepository = get(), syncManager = get())
+        }
 
-    @Provides
-    @Singleton
-    fun provideReminderRepository(appDatabase: AppDatabase) = ReminderRepository(appDatabase.reminderDao)
+        single {
+            NoteRepository(
+                get<AppDatabase>().noteDao,
+                get<AppDatabase>().idMappingDao,
+                get<AppDatabase>().reminderDao,
+                syncManager = get()
+            )
+        }
 
-    @Provides
-    @Singleton
-    fun provideTagRepository(
-        appDatabase: AppDatabase,
-        syncManager: SyncManager,
-        noteRepository: NoteRepository,
-    ) = TagRepository(appDatabase.tagDao, appDatabase.noteTagDao, noteRepository, syncManager)
-
-    @Provides
-    @Singleton
-    fun provideCloudIdRepository(appDatabase: AppDatabase) = IdMappingRepository(appDatabase.idMappingDao)
+        single {
+            ReminderRepository(get<AppDatabase>().reminderDao)
+        }
+    }
 }
