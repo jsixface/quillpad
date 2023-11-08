@@ -8,7 +8,6 @@ import android.os.Build.VERSION.SDK_INT
 import android.os.StrictMode
 import androidx.core.content.ContextCompat
 import androidx.databinding.ktx.BuildConfig
-import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.*
 import coil.ImageLoader
 import coil.ImageLoaderFactory
@@ -22,23 +21,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
+import org.koin.androidx.workmanager.koin.workManagerFactory
 import org.koin.core.context.GlobalContext.startKoin
 import org.qosp.notes.components.workers.BinCleaningWorker
 import org.qosp.notes.components.workers.SyncWorker
 import org.qosp.notes.di.*
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 
-class App : Application(), ImageLoaderFactory, Configuration.Provider {
+class App : Application(), ImageLoaderFactory {
     val syncingScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-
-    @Inject
-    lateinit var workerFactory: HiltWorkerFactory
-
-    override fun getWorkManagerConfiguration() =
-        Configuration.Builder()
-            .setWorkerFactory(workerFactory)
-            .build()
 
     override fun newImageLoader(): ImageLoader {
         return ImageLoader.Builder(applicationContext)
@@ -68,9 +59,10 @@ class App : Application(), ImageLoaderFactory, Configuration.Provider {
             // Reference Android context
             androidContext(this@App)
             // Load modules
+            workManagerFactory()
             modules(
                 DatabaseModule.dbModule,
-                RepositoryModule.module,
+                UiModule.module,
                 PreferencesModule.module,
                 BackendModule.module, MarkwonModule.module, UtilModule.module
             )

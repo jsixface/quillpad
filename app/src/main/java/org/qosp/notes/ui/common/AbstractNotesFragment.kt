@@ -27,9 +27,9 @@ import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialElevationScale
-import dagger.hilt.android.AndroidEntryPoint
 import io.noties.markwon.Markwon
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import org.qosp.notes.R
 import org.qosp.notes.data.model.Note
 import org.qosp.notes.data.sync.core.BaseResult
@@ -41,16 +41,13 @@ import org.qosp.notes.ui.common.recycler.NoteRecyclerAdapter
 import org.qosp.notes.ui.common.recycler.NoteRecyclerListener
 import org.qosp.notes.ui.common.recycler.onBackPressedHandler
 import org.qosp.notes.ui.utils.collect
-import org.qosp.notes.ui.utils.launch
 import org.qosp.notes.ui.utils.liftAppBarOnScroll
 import org.qosp.notes.ui.utils.shareNote
 import org.qosp.notes.ui.utils.views.BottomSheet
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 
 private typealias Data = AbstractNotesViewModel.Data
 
-@AndroidEntryPoint
 abstract class AbstractNotesFragment(@LayoutRes resId: Int) : BaseFragment(resId) {
     abstract val currentDestinationId: Int
     abstract val recyclerView: RecyclerView
@@ -80,8 +77,7 @@ abstract class AbstractNotesFragment(@LayoutRes resId: Int) : BaseFragment(resId
             recyclerAdapter.showHiddenNotes = value
         }
 
-    @Inject
-    lateinit var markwon: Markwon
+    val markwon: Markwon by inject()
 
     // Bug:
     //
@@ -346,6 +342,7 @@ abstract class AbstractNotesFragment(@LayoutRes resId: Int) : BaseFragment(resId
                         )
                     )
                 }
+
                 R.id.action_unarchive -> activityModel.unarchiveNotes(*selectedNotes)
                 R.id.action_restore_selected -> activityModel.restoreNotes(*selectedNotes)
                 R.id.action_delete_selected -> {
@@ -358,6 +355,7 @@ abstract class AbstractNotesFragment(@LayoutRes resId: Int) : BaseFragment(resId
                         }
                     }
                 }
+
                 R.id.action_delete_permanently_selected -> {
                     activityModel.deleteNotesPermanently(*selectedNotes)
                     sendMessage(
@@ -366,6 +364,7 @@ abstract class AbstractNotesFragment(@LayoutRes resId: Int) : BaseFragment(resId
                         )
                     )
                 }
+
                 R.id.action_hide_selected -> activityModel.hideNotes(*selectedNotes)
                 R.id.action_duplicate_selected -> activityModel.duplicateNotes(*selectedNotes)
                 R.id.action_move_selected -> showMoveToNotebookDialog(*selectedNotes)
@@ -373,6 +372,7 @@ abstract class AbstractNotesFragment(@LayoutRes resId: Int) : BaseFragment(resId
                     activityModel.notesToBackup = selectedNotes.toSet()
                     exportNotesLauncher.launch(null)
                 }
+
                 R.id.action_select_all -> {
                     selectAllNotes()
                     clearSelectionAfterAction = false
@@ -492,10 +492,18 @@ abstract class AbstractNotesFragment(@LayoutRes resId: Int) : BaseFragment(resId
             action(R.string.action_full_preview, R.drawable.ic_preview, condition = note.isCompactPreview) {
                 activityModel.makeNotesFullPreview(note)
             }
-            action(R.string.action_disable_markdown, R.drawable.ic_markdown, condition = !note.isDeleted && note.isMarkdownEnabled) {
+            action(
+                R.string.action_disable_markdown,
+                R.drawable.ic_markdown,
+                condition = !note.isDeleted && note.isMarkdownEnabled
+            ) {
                 activityModel.disableMarkdown(note)
             }
-            action(R.string.action_enable_markdown, R.drawable.ic_markdown, condition = !note.isDeleted && !note.isMarkdownEnabled) {
+            action(
+                R.string.action_enable_markdown,
+                R.drawable.ic_markdown,
+                condition = !note.isDeleted && !note.isMarkdownEnabled
+            ) {
                 activityModel.enableMarkdown(note)
             }
             action(R.string.action_duplicate, R.drawable.ic_duplicate, condition = isNormal) {

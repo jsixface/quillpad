@@ -3,7 +3,6 @@ package org.qosp.notes.ui.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -14,10 +13,8 @@ import org.qosp.notes.data.sync.nextcloud.NextcloudConfig
 import org.qosp.notes.preferences.CloudService
 import org.qosp.notes.preferences.PreferenceRepository
 import org.qosp.notes.preferences.SyncMode
-import javax.inject.Inject
 
-@HiltViewModel
-class SettingsViewModel @Inject constructor(
+class SettingsViewModel(
     private val preferenceRepository: PreferenceRepository,
     syncManager: SyncManager,
 ) : ViewModel() {

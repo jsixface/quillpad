@@ -2,12 +2,14 @@ package org.qosp.notes.di
 
 import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
+import org.koin.androidx.workmanager.dsl.worker
 import org.koin.dsl.module
 import org.qosp.notes.App
 import org.qosp.notes.BuildConfig
 import org.qosp.notes.components.MediaStorageManager
 import org.qosp.notes.components.backup.BackupManager
-import org.qosp.notes.data.repo.*
+import org.qosp.notes.components.workers.BinCleaningWorker
+import org.qosp.notes.components.workers.SyncWorker
 import org.qosp.notes.data.sync.core.SyncManager
 import org.qosp.notes.ui.reminders.ReminderManager
 import org.qosp.notes.ui.utils.ConnectionManager
@@ -40,5 +42,23 @@ object UtilModule {
                 androidContext()
             )
         }
+        worker {
+            SyncWorker(
+                context = get(),
+                params = get(),
+                preferenceRepository = get(),
+                syncManager = get(),
+            )
+        }
+        worker {
+            BinCleaningWorker(
+                context = get(),
+                params = get(),
+                preferenceRepository = get(),
+                noteRepository = get(),
+                mediaStorageManager = get(),
+            )
+        }
     }
+
 }

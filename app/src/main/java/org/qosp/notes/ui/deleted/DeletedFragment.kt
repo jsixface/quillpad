@@ -11,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.appbar.AppBarLayout
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.qosp.notes.R
 import org.qosp.notes.databinding.FragmentDeletedBinding
 import org.qosp.notes.databinding.LayoutNoteBinding
@@ -24,7 +25,7 @@ class DeletedFragment : AbstractNotesFragment(R.layout.fragment_deleted) {
     private val binding by viewBinding(FragmentDeletedBinding::bind)
 
     override val currentDestinationId: Int = R.id.fragment_deleted
-    override val model: DeletedViewModel by viewModels()
+    override val model: DeletedViewModel by viewModel()
 
     override val recyclerView: RecyclerView
         get() = binding.recyclerDeleted

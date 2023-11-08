@@ -3,7 +3,6 @@ package org.qosp.notes.ui.sync.nextcloud
 import android.webkit.URLUtil
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -13,10 +12,8 @@ import org.qosp.notes.data.sync.core.Success
 import org.qosp.notes.data.sync.core.SyncManager
 import org.qosp.notes.data.sync.nextcloud.NextcloudConfig
 import org.qosp.notes.preferences.PreferenceRepository
-import javax.inject.Inject
 
-@HiltViewModel
-class NextcloudViewModel @Inject constructor(
+class NextcloudViewModel(
     private val preferenceRepository: PreferenceRepository,
     private val syncManager: SyncManager,
 ) : ViewModel() {

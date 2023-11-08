@@ -132,7 +132,10 @@ dependencies {
 
     // koin
     implementation "io.insert-koin:koin-core:$koin_version"
+    implementation "io.insert-koin:koin-core-coroutines:$koin_version"
+    implementation "io.insert-koin:koin-android-compat:$koin_version"
     implementation "io.insert-koin:koin-android:$koin_version"
+    implementation "io.insert-koin:koin-androidx-workmanager:$koin_version"
 
     // Lifecycle
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"

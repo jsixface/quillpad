@@ -3,19 +3,8 @@ package org.qosp.notes.ui
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 import me.msoul.datastore.defaultOf
 import org.qosp.notes.components.MediaStorageManager
 import org.qosp.notes.data.model.Note
@@ -26,17 +15,11 @@ import org.qosp.notes.data.repo.ReminderRepository
 import org.qosp.notes.data.repo.TagRepository
 import org.qosp.notes.data.sync.core.BaseResult
 import org.qosp.notes.data.sync.core.SyncManager
-import org.qosp.notes.preferences.GroupNotesWithoutNotebook
-import org.qosp.notes.preferences.LayoutMode
-import org.qosp.notes.preferences.NoteDeletionTime
-import org.qosp.notes.preferences.PreferenceRepository
-import org.qosp.notes.preferences.SortMethod
+import org.qosp.notes.preferences.*
 import org.qosp.notes.ui.reminders.ReminderManager
 import java.time.Instant
-import javax.inject.Inject
 
-@HiltViewModel
-class ActivityViewModel @Inject constructor(
+class ActivityViewModel (
     private val noteRepository: NoteRepository,
     private val notebookRepository: NotebookRepository,
     private val preferenceRepository: PreferenceRepository,

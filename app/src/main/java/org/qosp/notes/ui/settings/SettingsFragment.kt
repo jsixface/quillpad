@@ -4,11 +4,10 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import org.qosp.notes.R
 import org.qosp.notes.databinding.FragmentSettingsBinding
 import org.qosp.notes.preferences.*
@@ -19,10 +18,9 @@ import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
-@AndroidEntryPoint
 class SettingsFragment : BaseFragment(resId = R.layout.fragment_settings) {
     private val binding by viewBinding(FragmentSettingsBinding::bind)
-    private val model: SettingsViewModel by activityViewModels()
+    private val model: SettingsViewModel by activityViewModel()
 
     private var appPreferences = AppPreferences()
 

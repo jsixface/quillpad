@@ -3,15 +3,15 @@ package org.qosp.notes.ui.reminders
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.runBlocking
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
+import org.koin.java.KoinJavaComponent
+import org.koin.java.KoinJavaComponent.inject
 import org.qosp.notes.BuildConfig
-import javax.inject.Inject
 
-@AndroidEntryPoint
-class ReminderReceiver : BroadcastReceiver() {
-    @Inject
-    lateinit var reminderManager: ReminderManager
+class ReminderReceiver : BroadcastReceiver(), KoinComponent {
+    val  reminderManager by inject<ReminderManager>()
 
     override fun onReceive(context: Context, intent: Intent?) = runBlocking {
         when (intent?.action) {

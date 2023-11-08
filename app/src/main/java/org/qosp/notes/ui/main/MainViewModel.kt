@@ -1,7 +1,6 @@
 package org.qosp.notes.ui.main
 
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.firstOrNull
@@ -14,10 +13,8 @@ import org.qosp.notes.data.sync.core.SyncManager
 import org.qosp.notes.preferences.PreferenceRepository
 import org.qosp.notes.preferences.SortMethod
 import org.qosp.notes.ui.common.AbstractNotesViewModel
-import javax.inject.Inject
 
-@HiltViewModel
-class MainViewModel @Inject constructor(
+class MainViewModel(
     private val noteRepository: NoteRepository,
     private val notebookRepository: NotebookRepository,
     preferenceRepository: PreferenceRepository,

@@ -18,12 +18,7 @@ import androidx.annotation.ColorInt
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.graphics.drawable.toBitmap
-import androidx.core.view.ViewCompat
-import androidx.core.view.doOnNextLayout
-import androidx.core.view.doOnPreDraw
-import androidx.core.view.isVisible
-import androidx.core.view.marginBottom
-import androidx.core.view.updateLayoutParams
+import androidx.core.view.*
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.clearFragmentResult
 import androidx.fragment.app.setFragmentResultListener
@@ -32,25 +27,21 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.ItemTouchHelper.ACTION_STATE_DRAG
-import androidx.recyclerview.widget.ItemTouchHelper.ACTION_STATE_SWIPE
-import androidx.recyclerview.widget.ItemTouchHelper.DOWN
-import androidx.recyclerview.widget.ItemTouchHelper.LEFT
-import androidx.recyclerview.widget.ItemTouchHelper.RIGHT
-import androidx.recyclerview.widget.ItemTouchHelper.UP
+import androidx.recyclerview.widget.ItemTouchHelper.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialContainerTransform
 import com.google.android.material.transition.MaterialSharedAxis
-import dagger.hilt.android.AndroidEntryPoint
 import io.noties.markwon.Markwon
 import io.noties.markwon.editor.MarkwonEditor
 import io.noties.markwon.editor.MarkwonEditorTextWatcher
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.commonmark.node.Code
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.qosp.notes.R
 import org.qosp.notes.data.model.Attachment
 import org.qosp.notes.data.model.Note
@@ -70,7 +61,10 @@ import org.qosp.notes.ui.common.showMoveToNotebookDialog
 import org.qosp.notes.ui.editor.dialog.InsertHyperlinkDialog
 import org.qosp.notes.ui.editor.dialog.InsertImageDialog
 import org.qosp.notes.ui.editor.dialog.InsertTableDialog
-import org.qosp.notes.ui.editor.markdown.*
+import org.qosp.notes.ui.editor.markdown.MarkdownSpan
+import org.qosp.notes.ui.editor.markdown.applyTo
+import org.qosp.notes.ui.editor.markdown.insertMarkdown
+import org.qosp.notes.ui.editor.markdown.toggleCheckmarkCurrentLine
 import org.qosp.notes.ui.media.MediaActivity
 import org.qosp.notes.ui.recorder.RECORDED_ATTACHMENT
 import org.qosp.notes.ui.recorder.RECORD_CODE
@@ -86,14 +80,12 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.Executors
-import javax.inject.Inject
 
 private typealias Data = EditorViewModel.Data
 
-@AndroidEntryPoint
 class EditorFragment : BaseFragment(R.layout.fragment_editor) {
     private val binding by viewBinding(FragmentEditorBinding::bind)
-    private val model: EditorViewModel by viewModels()
+    private val model: EditorViewModel by viewModel()
 
     private val args: EditorFragmentArgs by navArgs()
     private var snackbar: Snackbar? = null
@@ -115,11 +107,8 @@ class EditorFragment : BaseFragment(R.layout.fragment_editor) {
     private lateinit var attachmentsAdapter: AttachmentsAdapter
     private lateinit var tasksAdapter: TasksAdapter
 
-    @Inject
-    lateinit var markwon: Markwon
-
-    @Inject
-    lateinit var markwonEditor: MarkwonEditor
+    private val markwon: Markwon by inject()
+    private val markwonEditor: MarkwonEditor by inject()
 
     override val hasDefaultAnimation = false
     override val toolbar: Toolbar
@@ -1037,7 +1026,7 @@ class EditorFragment : BaseFragment(R.layout.fragment_editor) {
                 tasksAdapter.notifyItemRangeChanged(position, tasks.size - position)
             } else {
                 // Move to after last open task or to very beginning if all tasks are done
-                val newPosition = tasks.indexOfLast { it.id != newTask.id && ! it.isDone } + 1
+                val newPosition = tasks.indexOfLast { it.id != newTask.id && !it.isDone } + 1
 
                 // Only move upwards; don't move further down
                 if (newPosition < position) {
@@ -1129,7 +1118,7 @@ class EditorFragment : BaseFragment(R.layout.fragment_editor) {
         setMarkdownToolbarVisibility(note)
     }
 
-    private fun hasNoteEmptyContent (note: Note? = data.note) : Boolean {
+    private fun hasNoteEmptyContent(note: Note? = data.note): Boolean {
         return note?.content?.isBlank() == true || (note?.isList == true && note.taskList.isEmpty())
     }
 

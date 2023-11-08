@@ -3,7 +3,6 @@ package org.qosp.notes.ui.editor
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import me.msoul.datastore.defaultOf
@@ -13,11 +12,9 @@ import org.qosp.notes.data.repo.NotebookRepository
 import org.qosp.notes.data.sync.core.SyncManager
 import org.qosp.notes.preferences.*
 import java.time.Instant
-import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 
-@HiltViewModel
-class EditorViewModel @Inject constructor(
+class EditorViewModel(
     private val noteRepository: NoteRepository,
     private val notebookRepository: NotebookRepository,
     private val syncManager: SyncManager,

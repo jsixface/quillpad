@@ -1,13 +1,8 @@
 package org.qosp.notes.ui.search
 
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import org.qosp.notes.data.model.Note
 import org.qosp.notes.data.model.Notebook
@@ -17,10 +12,8 @@ import org.qosp.notes.data.sync.core.SyncManager
 import org.qosp.notes.preferences.PreferenceRepository
 import org.qosp.notes.preferences.SortMethod
 import org.qosp.notes.ui.common.AbstractNotesViewModel
-import javax.inject.Inject
 
-@HiltViewModel
-class SearchViewModel @Inject constructor(
+class SearchViewModel(
     noteRepository: NoteRepository,
     notebookRepository: NotebookRepository,
     preferenceRepository: PreferenceRepository,

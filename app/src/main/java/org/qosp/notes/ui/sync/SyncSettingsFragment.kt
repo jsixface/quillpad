@@ -8,7 +8,7 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.activityViewModels
-import dagger.hilt.android.AndroidEntryPoint
+import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import org.qosp.notes.R
 import org.qosp.notes.databinding.FragmentSyncSettingsBinding
 import org.qosp.notes.preferences.AppPreferences
@@ -23,10 +23,9 @@ import org.qosp.notes.ui.utils.collect
 import org.qosp.notes.ui.utils.liftAppBarOnScroll
 import org.qosp.notes.ui.utils.viewBinding
 
-@AndroidEntryPoint
 class SyncSettingsFragment : BaseFragment(R.layout.fragment_sync_settings) {
     private val binding by viewBinding(FragmentSyncSettingsBinding::bind)
-    private val model: SettingsViewModel by activityViewModels()
+    private val model: SettingsViewModel by activityViewModel()
 
     override val hasMenu = false
     override val toolbar: Toolbar
