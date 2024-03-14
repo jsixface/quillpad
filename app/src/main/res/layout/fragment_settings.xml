@@ -33,7 +33,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <TextView
+                <!-- General -->
+            <TextView
                     android:text="@string/preferences_header_general"
                     android:textStyle="bold"
                     android:fontFamily="@font/inter_font_family"
@@ -71,14 +72,25 @@
                     android:layout_height="1dp"
                     android:background="?attr/colorOutline"/>
 
-                <TextView
+                <!-- View -->
+            <!-- Notebook -->
+            <TextView
                     android:text="@string/preferences_header_view"
                     android:textStyle="bold"
                     android:fontFamily="@font/inter_font_family"
                     android:textColor="?attr/colorPrimary"
-                    android:padding="16dp"
+                    android:paddingTop="16dp"
+                    android:paddingLeft="16dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
+
+            <TextView
+                android:text="@string/preferences_header_view_notebook"
+                android:fontFamily="@font/inter_font_family"
+                android:textColor="?attr/colorSecondary"
+                android:padding="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
                 <org.qosp.notes.ui.utils.views.PreferenceView
                     android:id="@+id/setting_layout_mode"
@@ -96,13 +108,22 @@
                     app:subTextId="@{model.prefs.sortMethod.nameResource}"
                     app:iconSrc="@drawable/ic_sort"/>
 
-                <org.qosp.notes.ui.utils.views.PreferenceView
-                    android:id="@+id/setting_show_date"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:subTextId="@{model.prefs.showDate.nameResource}"
-                    app:text="@string/preferences_show_date"
-                    app:iconSrc="@drawable/ic_date_time"/>
+                <!-- Note content -->
+            <TextView
+                android:text="@string/preferences_header_view_note_content"
+                android:fontFamily="@font/inter_font_family"
+                android:textColor="?attr/colorSecondary"
+                android:padding="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <org.qosp.notes.ui.utils.views.PreferenceView
+                android:id="@+id/setting_font_size"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:subTextId="@{model.prefs.showDate.nameResource}"
+                    app:text="@string/preferences_font_size"
+                app:iconSrc="@drawable/ic_search"/>
 
             <org.qosp.notes.ui.utils.views.PreferenceView
                 android:id="@+id/setting_show_fab"
@@ -112,6 +133,13 @@
                 app:iconSrc="@drawable/ic_pencil"/>
 
                 <org.qosp.notes.ui.utils.views.PreferenceView
+                    android:id="@+id/setting_show_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:text="@string/preferences_show_date"
+                    app:iconSrc="@drawable/ic_date_time"/>
+
+            <org.qosp.notes.ui.utils.views.PreferenceView
                     android:id="@+id/setting_date_format"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -130,7 +158,8 @@
                     android:layout_height="1dp"
                     android:background="?attr/colorOutline"/>
 
-                <TextView
+                <!-- Other -->
+            <TextView
                     android:text="@string/preferences_header_other"
                     android:textStyle="bold"
                     android:fontFamily="@font/inter_font_family"
@@ -175,7 +204,8 @@
                     android:layout_height="1dp"
                     android:background="?attr/colorOutline"/>
 
-                <TextView
+                <!-- Backup -->
+            <TextView
                     android:text="@string/preferences_header_backup"
                     android:textStyle="bold"
                     android:fontFamily="@font/inter_font_family"
@@ -213,7 +243,8 @@
                     android:layout_height="1dp"
                     android:background="?attr/colorOutline"/>
 
-                <TextView
+                <!-- Syncing -->
+            <TextView
                     android:text="@string/preferences_header_syncing"
                     android:textStyle="bold"
                     android:fontFamily="@font/inter_font_family"

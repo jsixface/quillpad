@@ -276,5 +276,6 @@
   </string>
   <string name="preferences_file_storage_location">Ubicación de almacenamiento</string>
   <string name="preferences_file_storage_select">Seleccione la ubicación de almacenamiento</string>
+    <string name="preferences_color_scheme_system">Del sistema</string>
 
 </resources>

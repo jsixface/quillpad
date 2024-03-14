@@ -300,4 +300,5 @@
   </string>
   <string name="preferences_file_storage_location">Emplacement de stockage</string>
   <string name="preferences_file_storage_select">Sélectionnez l\'emplacement de stockage</string>
+    <string name="preferences_color_scheme_system">Thème du système</string>
 </resources>

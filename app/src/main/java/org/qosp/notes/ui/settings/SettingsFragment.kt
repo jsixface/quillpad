@@ -51,6 +51,7 @@ class SettingsFragment : BaseFragment(resId = R.layout.fragment_settings) {
         setupNoteDeletionTimeListener()
         setupBackupStrategyListener()
         setupShowDateListener()
+        setupShowFontSizeListener()
         setupShowFabChangeModeListener()
         setupDateFormatListener()
         setupTimeFormatListener()
@@ -96,6 +97,7 @@ class SettingsFragment : BaseFragment(resId = R.layout.fragment_settings) {
                 binding.settingGroupNotesWithoutNotebook.subText = getString(groupNotesWithoutNotebook.nameResource)
                 binding.settingMoveCheckedItems.subText = getString(moveCheckedItems.nameResource)
                 binding.settingShowDate.subText = getString(showDate.nameResource)
+                binding.settingFontSize.subText = getString(editorFontSize.nameResource)
                 binding.settingShowFab.subText = getString(showFabChangeMode.nameResource)
                 with(DateTimeFormatter.ofPattern(getString(dateFormat.patternResource))) {
                     binding.settingDateFormat.subText = format(LocalDate.now())
@@ -191,6 +193,12 @@ class SettingsFragment : BaseFragment(resId = R.layout.fragment_settings) {
 
     private fun setupShowDateListener() = binding.settingShowDate.setOnClickListener {
         showPreferenceDialog(R.string.preferences_show_date, appPreferences.showDate) { selected ->
+            model.setPreference(selected)
+        }
+    }
+
+    private fun setupShowFontSizeListener() = binding.settingFontSize.setOnClickListener {
+        showPreferenceDialog(R.string.preferences_font_size, appPreferences.editorFontSize) { selected ->
             model.setPreference(selected)
         }
     }

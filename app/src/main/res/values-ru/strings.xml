@@ -95,7 +95,7 @@
     <string name="about_developer">Разработчик</string>
     <string name="about_contribute">Внести вклад</string>
     <string name="about_support">Поддержать</string>
-    <string name="about_support_subtext">Создание и поддержка открытых проектов требует времени и 
+    <string name="about_support_subtext">Создание и поддержка открытых проектов требует времени и
 		труда.\bПоддержи разработчика!
     </string>
     <string name="about_libraries">Библиотеки</string>
@@ -302,4 +302,5 @@
   </string>
   <string name="preferences_file_storage_location">Место хранения</string>
   <string name="preferences_file_storage_select">Выберите место хранения</string>
+    <string name="preferences_color_scheme_system">Системная</string>
 </resources>

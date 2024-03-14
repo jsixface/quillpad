@@ -300,3 +300,6 @@
    <string name="preferences_file_storage_location">Місце зберігання</string>
    <string name="preferences_file_storage_select">Виберіть місце зберігання</string>
  </resources>
+
+     <string name="preferences_color_scheme_system">За системою</string>
+ </resources>

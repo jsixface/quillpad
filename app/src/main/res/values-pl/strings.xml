@@ -297,4 +297,5 @@
   </string>
   <string name="preferences_file_storage_location">Miejsce przechowywania</string>
   <string name="preferences_file_storage_select">Wybierz lokalizację przechowywania</string>
+    <string name="preferences_color_scheme_system">Zgodny z systemem</string>
 </resources>
