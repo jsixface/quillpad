@@ -75,7 +75,6 @@
     <string name="preferences_cloud_service">同步服务</string>
     <string name="preferences_cloud_service_disabled">禁用</string>
     <string name="preferences_cloud_service_nextcloud">Nextcloud</string>
-    <string name="preferences_sync_experimental_warning">同步功能目前处于试验阶段。\n您可能会遇到错误。</string>
     <string name="preferences_nextcloud_limited_features">请记住，Nextcloud Notes 不支持标签、附件、提醒等功能。</string>
     <string name="preferences_nextcloud_account">Nextcloud 帐户</string>
     <string name="preferences_nextcloud_instance_url">Nextcloud 实例网址</string>
@@ -294,5 +293,11 @@
         <item quantity="one">选定的 %d 个标签</item>
         <item quantity="other">选定的 %d 个标签</item>
     </plurals>
+    <string name="preferences_cloud_service_files">文件存储</string>
+    <string name="preferences_file_storage_info">从本地存储或云提供商中选择一个文件夹。 所有笔记都将存储为 Markdown 文件。</string>
+    <string name="preferences_file_storage_location">存储位置</string>
+    <string name="preferences_file_storage_select">选择存储位置</string>
     <string name="preferences_color_scheme_system">跟随系统</string>
+    <string name="preferences_show_fab_change_mode">编辑/查看注释按钮位置</string>
+    <string name="preferences_fab">浮动按钮</string>
 </resources>

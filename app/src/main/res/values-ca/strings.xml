@@ -39,6 +39,11 @@
     <string name="preferences_sort_method_modified_asc">Data de modificació (ascendent)</string>
     <string name="preferences_sort_method_modified_desc">Data de modificació (descendent)</string>
     <string name="preferences_show_date">Mostra la data de creació/modificació</string>
+    <string name="preferences_cloud_service_files">Emmagatzematge d\'arxius</string>
+    <string name="preferences_file_storage_info">Seleccioneu una carpeta d\'emmagatzematge local o d\'un proveïdor de núvol. Totes les notes s\'emmagatzemaran com a fitxers Markdown.</string>
+    <string name="preferences_file_storage_location">Ubicació d\'emmagatzematge</string>
+    <string name="preferences_file_storage_select">Seleccioneu Ubicació d\'emmagatzematge</string>
+    <string name="preferences_color_scheme_system">Seguiu el sistema</string>
     <string name="preferences_show_fab_change_mode">Posició del botó Edita/Mostra nota</string>
     <string name="preferences_fab">Botó flotant</string>
     <string name="preferences_top_bar">Barra superior</string>
@@ -71,8 +76,7 @@
     <string name="preferences_cloud_service">Servei de sincronització</string>
     <string name="preferences_cloud_service_disabled">Desactivat</string>
     <string name="preferences_cloud_service_nextcloud">Nextcloud</string>
-    <string name="preferences_sync_experimental_warning">La funcionalitat de sincronització és experimental.\nPots trobar errors.</string>
-    <string name="preferences_nextcloud_limited_features">Tingueu en compte que Notes del Nextcloud no admet funcions com etiquetes, adjunts, recordatoris, etc.</string>
+  <string name="preferences_nextcloud_limited_features">Tingueu en compte que Notes del Nextcloud no admet funcions com etiquetes, adjunts, recordatoris, etc.</string>
     <string name="preferences_nextcloud_account">Compte de Nextcloud</string>
     <string name="preferences_nextcloud_instance_url">URL de la instància Nextcloud</string>
     <string name="preferences_nextcloud_set_your_credentials">Establiu les credencials</string>
@@ -252,7 +256,7 @@
 
     <!-- Syncing -->
     <string name="message_not_valid_https">Això no és una adreça URL HTTPS vàlida.</string>
-    <string name="indicator_nextcloud_currently_logged_in_as">Heu iniciat sessió com a 
+    <string name="indicator_nextcloud_currently_logged_in_as">Heu iniciat sessió com a
 <b>%s</b>.
 </string>
     <string name="indicator_nextcloud_currently_not_logged_in">No heu iniciat sessió.</string>
