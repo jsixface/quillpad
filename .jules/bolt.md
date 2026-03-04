@@ -29,3 +29,11 @@
 2. Added `useDiff` parameter to `TasksAdapter.submitList` and disabled diffing during initial `bind()` to skip irrelevant comparisons between different notes.
 3. Granularized `NoteViewHolder` updates by splitting `setContent` into `setTextContent` and `setTasks`, allowing for targeted UI refreshes.
 4. Aligned `setupAttachments` with other content by respecting `isCompactPreview`, avoiding unnecessary attachment processing in compact mode.
+
+## 2025-05-22 - [Reactive UI and Editor performance bottlenecks]
+**Learning:** In a reactive UI architecture (using StateFlow/collect), monolithic collectors like `observeData` in `EditorFragment` can cause massive performance degradation if they re-render the entire UI on every state change (e.g., keystrokes). Common expensive operations like Markdown parsing (Markwon), menu setup, and tag chip inflation were being triggered redundantly.
+**Action:**
+1. Implemented a state-diffing mechanism by capturing `oldData` to gate UI updates.
+2. Re-used existing views in the `containerTags` ChipGroup instead of `removeAllViews()`.
+3. Cached `DateTimeFormatter` and only updated it when format preferences changed.
+4. Conditionally skipped Markwon parsing for content previews when hidden or unchanged.
