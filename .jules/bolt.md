@@ -29,3 +29,11 @@
 2. Added `useDiff` parameter to `TasksAdapter.submitList` and disabled diffing during initial `bind()` to skip irrelevant comparisons between different notes.
 3. Granularized `NoteViewHolder` updates by splitting `setContent` into `setTextContent` and `setTasks`, allowing for targeted UI refreshes.
 4. Aligned `setupAttachments` with other content by respecting `isCompactPreview`, avoiding unnecessary attachment processing in compact mode.
+
+## 2025-05-23 - [Editor state-diffing and preview optimization]
+**Learning:** In `EditorFragment`, the `observeData` collector was re-executing all UI updates (notebook, color, menu, tags, dates) on every keystroke. Additionally, `Markwon.applyTo` was being called for the content preview even when the editor was in edit mode and the preview was hidden.
+**Action:**
+1. Implemented state-diffing in `EditorFragment.observeData` using `oldData` to gate redundant UI updates.
+2. Optimized `textViewContentPreview` by skipping updates while in edit mode and ensuring a refresh when switching back to view mode.
+3. Refactored tag rendering to reuse `TextView` instances in `containerTags` instead of calling `removeAllViews()`.
+4. Cached the `DateTimeFormatter` and only re-initialize it when the user's date/time format preferences change.
