@@ -132,6 +132,7 @@ class EditorFragment : BaseFragment(R.layout.fragment_editor) {
     @ColorInt
     private var backgroundColor: Int = Color.TRANSPARENT
     private var data = Data()
+    private var oldData: Data? = null
 
     private var nextTaskId: Long = 0L
     private var isList: Boolean = false
@@ -773,6 +774,7 @@ class EditorFragment : BaseFragment(R.layout.fragment_editor) {
 
             if (!data.isInitialized || data.note == null) return@collect
 
+            val old = oldData
             this@EditorFragment.data = data
 
             val isConverted = data.note.isList != isList
@@ -857,55 +859,79 @@ class EditorFragment : BaseFragment(R.layout.fragment_editor) {
             if (isFirstLoad) requestFocusForFields()
 
             // Also set text of preview textviews
-            textViewTitlePreview.text = data.note.title.ifEmpty { getString(R.string.indicator_untitled) }
-
-            if (isMarkdownEnabled) {
-                // Seems to be crashing often without wrapping it in a post { } call
-                textViewContentPreview.post {
-                    markwon.applyTo(textViewContentPreview, data.note.content) {
-                        tableReplacement = { Code(getString(R.string.message_cannot_preview_table)) }
-                        maximumTableColumns = 15
-                    }
-                }
-            } else {
-                textViewContentPreview.text = data.note.content
+            if (old?.note?.title != data.note.title || isFirstLoad) {
+                textViewTitlePreview.text = data.note.title.ifEmpty { getString(R.string.indicator_untitled) }
             }
 
-            setupMenuItems(data.note, data.note.reminders.isNotEmpty())
+            if (textViewContentPreview.isVisible && (old?.note?.content != data.note.content || isFirstLoad)) {
+                // We only need to update the preview if it was already visible.
+                // If it just became visible, updateEditMode already handled the refresh.
+                val wasVisible = old?.let { !model.inEditMode && !it.note!!.isList } ?: false
+                if (wasVisible || isFirstLoad) {
+                    if (isMarkdownEnabled) {
+                        // Seems to be crashing often without wrapping it in a post { } call
+                        textViewContentPreview.post {
+                            markwon.applyTo(textViewContentPreview, data.note.content) {
+                                tableReplacement = { Code(getString(R.string.message_cannot_preview_table)) }
+                                maximumTableColumns = 15
+                            }
+                        }
+                    } else {
+                        textViewContentPreview.text = data.note.content
+                    }
+                }
+            }
+
+            if (old?.note != data.note) {
+                setupMenuItems(data.note, data.note.reminders.isNotEmpty())
+            }
 
             // Update notebook indicator
-            notebookView.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                requireContext().getDrawableCompat(R.drawable.ic_notebook),
-                null,
-                requireContext().getDrawableCompat(if (data.notebook == null) R.drawable.ic_add else R.drawable.ic_swap),
-                null
-            )
-            notebookView.text = data.notebook?.name ?: getString(R.string.notebooks_unassigned)
+            if (old?.notebook != data.notebook) {
+                notebookView.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                    requireContext().getDrawableCompat(R.drawable.ic_notebook),
+                    null,
+                    requireContext().getDrawableCompat(
+                        if (data.notebook == null) R.drawable.ic_add else R.drawable.ic_swap
+                    ),
+                    null
+                )
+                notebookView.text = data.notebook?.name ?: getString(R.string.notebooks_unassigned)
+            }
 
             // Update fragment background colour
-            data.note.color.resId(requireContext())?.let { resId ->
-                backgroundColor = resId
-                root.setBackgroundColor(resId)
-                containerBottomToolbar.setBackgroundColor(resId)
-                toolbar.setBackgroundColor(resId)
+            if (old?.note?.color != data.note.color) {
+                data.note.color.resId(requireContext())?.let { resId ->
+                    backgroundColor = resId
+                    root.setBackgroundColor(resId)
+                    containerBottomToolbar.setBackgroundColor(resId)
+                    toolbar.setBackgroundColor(resId)
+                }
             }
 
             // Update date
-            val offset = ZoneId.systemDefault().rules.getOffset(Instant.now())
-            val creationDate = LocalDateTime.ofEpochSecond(data.note.creationDate, 0, offset)
-            val modifiedDate = LocalDateTime.ofEpochSecond(data.note.modifiedDate, 0, offset)
-
-            formatter =
-                DateTimeFormatter.ofPattern("${getString(dateFormat.patternResource)}, ${getString(timeFormat.patternResource)}")
-
             textViewDate.isVisible = data.showDates
-            if (formatter != null && data.showDates) {
-                textViewDate.text =
-                    getString(
+            if (data.showDates) {
+                val offset = ZoneId.systemDefault().rules.getOffset(Instant.now())
+                val creationDate = LocalDateTime.ofEpochSecond(data.note.creationDate, 0, offset)
+                val modifiedDate = LocalDateTime.ofEpochSecond(data.note.modifiedDate, 0, offset)
+
+                if (old?.dateTimeFormats != data.dateTimeFormats || formatter == null) {
+                    formatter = DateTimeFormatter.ofPattern(
+                        "${getString(dateFormat.patternResource)}, ${getString(timeFormat.patternResource)}"
+                    )
+                }
+
+                if (old?.note?.creationDate != data.note.creationDate ||
+                    old?.note?.modifiedDate != data.note.modifiedDate ||
+                    old?.dateTimeFormats != data.dateTimeFormats
+                ) {
+                    textViewDate.text = getString(
                         R.string.indicator_note_date,
                         creationDate.format(formatter),
                         modifiedDate.format(formatter)
                     )
+                }
             }
 
             // We want to start the transition only when everything is loaded
@@ -935,15 +961,24 @@ class EditorFragment : BaseFragment(R.layout.fragment_editor) {
             attachmentsAdapter.submitList(data.note.attachments)
 
             // Update tags
-            containerTags.removeAllViews()
-            data.note.tags.forEach { tag ->
-                containerTags.addView(
-                    TextView(ContextThemeWrapper(requireContext(), R.style.TagChip)).apply {
-                        text = "# ${tag.name}"
+            if (old?.note?.tags != data.note.tags) {
+                while (containerTags.childCount > data.note.tags.size) {
+                    containerTags.removeViewAt(containerTags.childCount - 1)
+                }
+
+                data.note.tags.forEachIndexed { index, tag ->
+                    val textView = if (index < containerTags.childCount) {
+                        containerTags.getChildAt(index) as TextView
+                    } else {
+                        TextView(ContextThemeWrapper(requireContext(), R.style.TagChip)).also {
+                            containerTags.addView(it)
+                        }
                     }
-                )
+                    textView.text = "# ${tag.name}"
+                }
             }
 
+            oldData = data
             isFirstLoad = false
         }
     }
@@ -1222,8 +1257,25 @@ class EditorFragment : BaseFragment(R.layout.fragment_editor) {
             }
         }
 
+        val wasVisible = textViewContentPreview.isVisible
         textViewContentPreview.isVisible = !model.inEditMode && !isList
         editTextContent.isVisible = model.inEditMode && !isList
+
+        if (textViewContentPreview.isVisible && !wasVisible) {
+            val n = note ?: data.note
+            if (n != null) {
+                if (n.isMarkdownEnabled) {
+                    textViewContentPreview.post {
+                        markwon.applyTo(textViewContentPreview, n.content) {
+                            tableReplacement = { Code(getString(R.string.message_cannot_preview_table)) }
+                            maximumTableColumns = 15
+                        }
+                    }
+                } else {
+                    textViewContentPreview.text = n.content
+                }
+            }
+        }
 
         val shouldDisplayFAB = data.showFabChangeMode && !isNoteDeleted && !noteHasEmptyContent
         when {
